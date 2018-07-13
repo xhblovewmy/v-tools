@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { chineseChars } from '../const'
+import { chineseChars } from '@/const'
 export default {
   data () {
     return {

@@ -1,14 +1,33 @@
 <template>
   <el-container>
-    <el-header height="44px" class="header">花名生成器</el-header>
-    <el-main>
-      <router-view/>
-    </el-main>
+    <el-header height="44px" class="header">{{ title }}</el-header>
+    <el-container>
+      <el-aside>
+        <v-menu />
+      </el-aside>
+      <el-main>
+        <router-view/>
+      </el-main>
+    </el-container>
   </el-container>
 </template>
 
 <script>
+import Menu from '@/components/menu'
+import bus from '@/bus'
+
 export default {
+  data () {
+    return {
+      title: ''
+    }
+  },
+  mounted () {
+    bus.$on('changeTitle', title => {
+      this.title = title
+    })
+  },
+  components: { 'v-menu': Menu }
 }
 </script>
 
