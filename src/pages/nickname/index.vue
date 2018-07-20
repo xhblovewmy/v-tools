@@ -1,13 +1,13 @@
 <template>
   <div :class="$style.container">
     <div>
-      <el-form :class="$style.form">
+      <el-form :class="$style.form" label-width="100px">
         <el-form-item label="花名字数">
           <el-radio v-model="nicknameLength" :label="2" @change="clear">两个字</el-radio>
           <el-radio v-model="nicknameLength" :label="3" @change="clear">三个字</el-radio>
         </el-form-item>
         <el-form-item :label="`固定第${index}个字`" v-for="index in nicknameLength" :key="index">
-          <input type="text" v-model="consistentChars[index - 1]" maxlength="1">
+          <el-input type="text" v-model="consistentChars[index - 1]" maxlength="1" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="generateNicknames">生成花名</el-button>

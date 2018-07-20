@@ -9,9 +9,14 @@ import {
   Form,
   FormItem,
   Radio,
+  RadioGroup,
   Button,
   Menu,
-  MenuItem
+  MenuItem,
+  TimePicker,
+  Input,
+  Collapse,
+  CollapseItem
 } from 'element-ui'
 
 import App from './App'
@@ -26,9 +31,14 @@ Vue.use(Aside)
 Vue.use(Form)
 Vue.use(FormItem)
 Vue.use(Radio)
+Vue.use(RadioGroup)
 Vue.use(Button)
 Vue.use(Menu)
 Vue.use(MenuItem)
+Vue.use(TimePicker)
+Vue.use(Input)
+Vue.use(Collapse)
+Vue.use(CollapseItem)
 
 /* eslint-disable no-new */
 new Vue({
