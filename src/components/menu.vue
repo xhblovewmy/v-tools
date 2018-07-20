@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-menu :active="$route.name" @select="changeMenu">
+    <el-menu :default-active="$route.name" @select="changeMenu">
       <el-menu-item v-for="item in menu" :key="item.name" :index="item.name">
         <i :class="item.iconClass"></i>
         <span slot="title">{{ item.title }}</span>
@@ -19,7 +19,7 @@ export default {
     }
   },
   created () {
-    console.log(this.$route)
+    console.log(this.$route.name, menu.map(item => item.name))
   },
   methods: {
     changeMenu (key, keyPath) {
