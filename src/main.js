@@ -16,7 +16,8 @@ import {
   TimePicker,
   Input,
   Collapse,
-  CollapseItem
+  CollapseItem,
+  Upload
 } from 'element-ui'
 
 import App from './App'
@@ -39,6 +40,7 @@ Vue.use(TimePicker)
 Vue.use(Input)
 Vue.use(Collapse)
 Vue.use(CollapseItem)
+Vue.use(Upload)
 
 /* eslint-disable no-new */
 new Vue({
