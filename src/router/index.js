@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Nickname from '@/pages/nickname'
+import FakeTalk from '@/pages/fake-talk'
 import bus from '@/bus'
 
 Vue.use(Router)
@@ -23,34 +24,12 @@ export const routes = [
   {
     path: '/fake-talk',
     name: 'fake-talk',
+    component: FakeTalk,
     isMenu: true,
     meta: {
       title: '微信聊天记录',
-      iconClass: 'el-icon-wechat'
+      iconClass: 'el-icon-menu'
     }
-  },
-  {
-    path: '/test',
-    children: [
-      {
-        path: 'demo-1',
-        name: 'demo-1',
-        isMenu: true,
-        meta: {
-          title: 'test1',
-          iconClass: 'el-icon-location'
-        }
-      },
-      {
-        path: 'demo-2',
-        name: 'demo-2',
-        isMenu: true,
-        meta: {
-          title: 'test2',
-          iconClass: 'el-icon-location'
-        }
-      }
-    ]
   }
 ]
 
@@ -60,7 +39,7 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   const { title = 'vvliebe' } = to.meta || {}
-  bus.$emit('changeTitle', title)
+  bus.title = title
   next()
 })
 

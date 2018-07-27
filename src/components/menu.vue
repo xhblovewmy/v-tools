@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <el-menu :active="$route.name" @select="changeMenu">
+  <div :class="$style.container">
+    <el-menu :default-active="$route.name" @select="changeMenu" :class="$style.menu">
       <el-menu-item v-for="item in menu" :key="item.name" :index="item.name">
         <i :class="item.iconClass"></i>
         <span slot="title">{{ item.title }}</span>
@@ -19,7 +19,7 @@ export default {
     }
   },
   created () {
-    console.log(this.$route)
+    console.log(this.$route.name, menu.map(item => item.name))
   },
   methods: {
     changeMenu (key, keyPath) {
@@ -29,3 +29,12 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus" module>
+.container
+  display flex
+  flex-direction column
+  height 100%
+  .menu
+    flex 1
+</style>
