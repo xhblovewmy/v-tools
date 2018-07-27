@@ -16,6 +16,17 @@
       <el-form-item label="我的昵称" v-if="data.showNickname">
         <el-input v-model="data.nickname"></el-input>
       </el-form-item>
+      <el-form-item label="我的头像">
+        <el-upload
+          list-type="picture-card"
+          :on-change="handleSelfAvatar"
+          :auto-upload="false"
+          action=""
+          :show-file-list="false">
+          <img :class="$style['preview-image']" :src="data.avatar" alt="" v-if="data.avatar">
+          <i class="el-icon-plus" v-else></i>
+        </el-upload>
+      </el-form-item>
       <el-form-item label="消息列表">
         <el-collapse v-model="activeIds">
           <el-collapse-item v-for="(message, index) in data.messageList" :key="message.id" :name="message.id" >
@@ -38,14 +49,13 @@
             </el-form-item>
             <el-form-item label="图片" v-else>
               <el-upload
-                class="avatar-uploader"
                 list-type="picture-card"
                 :on-change="file => handlePictureCardPreview(file, message.id)"
                 :auto-upload="false"
                 action=""
                 :show-file-list="false">
                 <img :class="$style['preview-image']" :src="message.photo" alt="" v-if="message.photo">
-                <i class="el-icon-plus"></i>
+                <i class="el-icon-plus" v-else></i>
               </el-upload>
             </el-form-item>
             <el-form-item label="本人消息">
@@ -56,6 +66,17 @@
             </el-form-item>
             <el-form-item label="发送者昵称" v-if="!message.isSelf">
               <el-input v-model="message.nickname" />
+            </el-form-item>
+            <el-form-item label="发送者头像" v-if="!message.isSelf">
+              <el-upload
+                list-type="picture-card"
+                :on-change="file => handleMessageAvatar(file, message.id)"
+                :auto-upload="false"
+                action=""
+                :show-file-list="false">
+                <img :class="$style['preview-image']" :src="message.avatar" alt="" v-if="message.avatar">
+                <i class="el-icon-plus" v-else></i>
+              </el-upload>
             </el-form-item>
             <el-form-item label="包含时间">
                 <el-radio-group v-model="message.hasTime">
@@ -70,7 +91,7 @@
         </el-collapse>
       </el-form-item>
     </el-form>
-    <preview :form="formEl" :class="$style.preview" />
+    <preview :form="data" :class="$style.preview" />
   </div>
 </template>
 
@@ -82,8 +103,9 @@ const initMessage = {
   type: 'text',
   isSelf: true,
   nickname: '',
+  avatar: '',
   photo: '',
-  text: '',
+  text: '我是消息',
   hasTime: false,
   time: null
 }
@@ -92,12 +114,14 @@ export default {
   data () {
     const initId = uuid.v4()
     return {
+      formEl: null,
       activeIds: [initId],
       data: {
         chatTime: new Date(),
-        chatName: '小伟哥',
+        chatName: '我是标题',
         showNickname: true,
-        nickname: 'vvliebe',
+        nickname: '我是昵称',
+        avatar: 'https://avatars3.githubusercontent.com/u/10060635?s=460&v=4',
         messageList: [
           {...initMessage, id: initId}
         ]
@@ -125,16 +149,20 @@ export default {
       }, [])
       this.activeIds = [...this.activeIds, newId]
     },
+    handleSelfAvatar (file) {
+      this.data.avatar = file.url
+    },
+    handleMessageAvatar (file, id) {
+      this.data.messageList = this.data.messageList.map(item => {
+        if (item.id !== id) return item
+        return {...item, avatar: file.url}
+      })
+    },
     handlePictureCardPreview (file, id) {
       this.data.messageList = this.data.messageList.map(item => {
         if (item.id !== id) return item
         return {...item, photo: file.url}
       })
-    }
-  },
-  computed: {
-    formEl () {
-      return this.$refs.form
     }
   },
   components: {

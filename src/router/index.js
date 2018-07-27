@@ -30,29 +30,6 @@ export const routes = [
       title: '微信聊天记录',
       iconClass: 'el-icon-menu'
     }
-  },
-  {
-    path: '/test',
-    children: [
-      {
-        path: 'demo-1',
-        name: 'demo-1',
-        isMenu: true,
-        meta: {
-          title: 'test1',
-          iconClass: 'el-icon-location'
-        }
-      },
-      {
-        path: 'demo-2',
-        name: 'demo-2',
-        isMenu: true,
-        meta: {
-          title: 'test2',
-          iconClass: 'el-icon-location'
-        }
-      }
-    ]
   }
 ]
 
