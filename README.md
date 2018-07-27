@@ -1,4 +1,4 @@
-# xy-generator
+# v-tools
 
 > A Vue.js project
 
