@@ -16,7 +16,7 @@
           </div>
           <div :class="[$style.content, $style.self]" v-if="message.isSelf">
             <div :class="$style.main">
-              <div :class="$style.nickname" v-if="form.showNickname">{{ form.nickname }}</div>
+              <!-- <div :class="$style.nickname" v-if="form.showNickname">{{ form.nickname }}</div> -->
               <div v-if="message.type === 'text'" :class="[$style.text, $style.self]">{{ message.text }}</div>
               <div v-else :class="[$style.photo, $style.self]">
                 <img :src="message.photo" alt="">
