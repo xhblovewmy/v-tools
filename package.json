@@ -10,6 +10,10 @@
     "lint": "eslint --ext .js,.vue src",
     "build": "node build/build.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:vvliebe/v-tools.git"
+  },
   "dependencies": {
     "dateformat": "^3.0.3",
     "element-ui": "^2.4.3",

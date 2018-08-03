@@ -12,3 +12,12 @@ install:
 
 script:
 - npm run build
+
+after_script:
+- cd ./dist
+- git init
+- git config user.name "vvliebe"
+- git config user.email "vvliebe@gmail.com"
+- git add .
+- git commit -m "auto deploy via Travis CI"
+- git push --force --quiet "git@github.com:vvliebe/v-tools.git" master:gh-pages
