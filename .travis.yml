@@ -1,6 +1,6 @@
 env:
   global:
-  - GH_REF: git@github.com:vvliebe/v-tools.git
+  - GH_REF: github.com:vvliebe/v-tools.git
   - secure: "k78PNS6Y8VRiRbT89R1gf8fG71zozd0v10OtdTtfA4rzS31E/Hs7ozDej83zEhgBFHL0c5/z1Jpoyq1GYH2zbGLbuqwKp+VjyS1X9kAL3frGJZmZ5qRORhkZmMH9I1gHWagEOsjviBkqNXbdN+2JybiwtEq8IQGs7473nsV31aYByC2Sa4FxPPcK+5lVFGVV8CvVLlASKsj6BDWyF/vv93qpXqz2ss1QvTE3Fs5KIB0629kPtBEUEagEJHNLQVe+SZKo+9ctxip/9BHQJ4ZxURP37Uf1mcBh3fRiXW4Hoa/gz+Zv96eNlihBnCCYzZ/d4mSvpRHv2xeG2aFGBqDqrozgMAoKUIgf0/waNR1Blp1z2T3dWmYm/yDWXxNRjNWkgstRNRBmzhPY8uqITHhLmj7gyfuF7nL31C/xjzZkJE+Z11+L9qijxRupp6Oycyj4ylwSYWOVm18U04dqe9rUoqR5bEiTVIb1/Pl/E5JtpYlTIFkKcgHqNOcoyAratErhQcSTgK4j/VHZqljaDsZ7Ay0pSXhQSq/X3WJNklJGlZdJzI7NDamlrVtUOhE5VGTza83KVU7tk9yGcLOnGTmI9vdbfV9oC41HdMbOnf9snA4UAuhG8AX6+YumF8aH/B6CUpIyArowC72c6LAB2f1XPKg36vXXLjJbuCCQy8puB2I="
 
 language: node_js
