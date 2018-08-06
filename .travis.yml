@@ -11,7 +11,7 @@ cache:
 language: node_js
 
 node_js:
-- "10.1.0"
+- "8.9.1"
 
 branchs:
   only:
