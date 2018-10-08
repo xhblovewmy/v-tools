@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Nickname from '@/pages/nickname'
 import FakeTalk from '@/pages/fake-talk'
+import Salary from '@/pages/salary'
 import bus from '@/bus'
 
 Vue.use(Router)
@@ -30,10 +31,21 @@ export const routes = [
       title: '微信聊天记录',
       iconClass: 'el-icon-menu'
     }
+  },
+  {
+    path: '/salary',
+    name: 'salary',
+    component: Salary,
+    isMenu: true,
+    meta: {
+      title: '五险一金计算器',
+      iconClass: 'el-icon-tickets'
+    }
   }
 ]
 
 const router = new Router({
+  mode: 'history',
   routes
 })
 
