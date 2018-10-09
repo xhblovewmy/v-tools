@@ -17,7 +17,7 @@
         </el-input>
       </el-form-item>
     </el-form>
-    <p>五险一金</p>
+    <p>五险一金 <span>（总计：{{ socialFundCount | currency }}）</span></p>
     <div :class="$style.table">
       <div :class="$style.row">
         <span></span>
@@ -32,6 +32,10 @@
     </div>
     <p>个人所得税</p>
     <div :class="$style.table">
+      <div :class="$style.row">
+        <span>扣除五险一金后薪资</span>
+        <span>{{ salary - socialFundCount | currency }}</span>
+      </div>
       <div :class="$style.row">
         <span>个人所得税（旧税法）</span>
         <span>{{ tax.old | currency }}</span>
@@ -122,9 +126,11 @@ export default {
         }
       }, {})
     },
+    socialFundCount () {
+      return Object.keys(this.socialFund).reduce((res, key) => res + this.socialFund[key][0], 0)
+    },
     tax () {
-      const socialPaymentCount = Object.keys(this.socialFund).reduce((res, key) => res + this.socialFund[key][0], 0)
-      const salaryBase = this.salary - socialPaymentCount
+      const salaryBase = this.salary - this.socialFundCount
       return {
         old: +(this.calcTax(salaryBase, 'old')).toFixed(2),
         new: +(this.calcTax(salaryBase, 'new')).toFixed(2)
@@ -132,12 +138,12 @@ export default {
     },
     oldAtSalary () {
       const tax = this.tax.old
-      const socialCount = Object.keys(this.socialFund).reduce((res, key) => res + this.socialFund[key][0], 0)
+      const socialCount = this.socialFundCount
       return +(this.salary - socialCount - tax).toFixed(2)
     },
     newAtSalary () {
       const tax = this.tax.new
-      const socialCount = Object.keys(this.socialFund).reduce((res, key) => res + this.socialFund[key][0], 0)
+      const socialCount = this.socialFundCount
       return +(this.salary - socialCount - tax).toFixed(2)
     }
   },
