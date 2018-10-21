@@ -17,7 +17,10 @@ import {
   Input,
   Collapse,
   CollapseItem,
-  Upload
+  Upload,
+  Card,
+  Select,
+  Option
 } from 'element-ui'
 
 import App from './App'
@@ -41,6 +44,9 @@ Vue.use(Input)
 Vue.use(Collapse)
 Vue.use(CollapseItem)
 Vue.use(Upload)
+Vue.use(Card)
+Vue.use(Select)
+Vue.use(Option)
 
 /* eslint-disable no-new */
 new Vue({
