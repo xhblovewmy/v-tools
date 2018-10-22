@@ -1,11 +1,11 @@
 <template>
   <div>
     <el-form label-width="200px">
-      <!-- <el-form-item label="税前薪资">
+      <el-form-item label="税前薪资">
         <el-input v-model="salary">
           <template slot="append">元</template>
         </el-input>
-      </el-form-item> -->
+      </el-form-item>
       <el-form-item label="城市">
         <el-select v-model="cityId" filterable placeholder="请选择">
           <el-option
@@ -18,17 +18,22 @@
       </el-form-item>
       <el-form-item label="接受教育子女数">
         <el-radio-group v-model="additionalDeduction.children">
-          <el-radio :label="0">无</el-radio>
-          <el-radio :label="1000">1个</el-radio>
-          <el-radio :label="2000">2个以上</el-radio>
+          <el-radio v-for="option in childrenOptions" :label="option.key" :key="option.key">{{ option.label }}</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="个人继续教育情况">
         <el-radio-group v-model="additionalDeduction.adultEducation" :class="$style['radio-group-vertical']">
-          <el-radio :label="0">无</el-radio>
-          <el-radio :label="400">学历继续教育（教育期间）</el-radio>
-          <el-radio :label="300">技能人员职业资格继续教育（已获取相关证书）</el-radio>
-          <el-radio :label="300">专业技术人员职业资格继续教育（已获取相关证书）</el-radio>
+          <el-radio v-for="option in educationOptions" :label="option.key" :key="option.key">{{ option.label }}</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="兄弟姐妹个数">
+        <el-radio-group v-model="additionalDeduction.support" :class="$style['radio-group-vertical']">
+          <el-radio v-for="option in supportOptions" :label="option.key" :key="option.key">{{ option.label }}</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="住房贷款情况">
+        <el-radio-group v-model="additionalDeduction.homeLoan" :class="$style['radio-group-vertical']">
+          <el-radio v-for="option in loanOptions" :label="option.key" :key="option.key">{{ option.label }}</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="税后薪资（旧税法）">
@@ -59,6 +64,36 @@
         </div>
       </div>
     </el-card>
+    <el-card :class="$style.card" header="专项附加扣除额">
+      <div>
+        <div :class="$style.table">
+          <div :class="$style.row">
+            <span>子女教育扣除</span>
+            <span>{{ additionalDeductionFee.children | currency }}</span>
+          </div>
+          <div :class="$style.row">
+            <span>首套房房贷利息扣除</span>
+            <span>{{ additionalDeductionFee.loan | currency }}</span>
+          </div>
+          <div :class="$style.row">
+            <span>房租扣除</span>
+            <span>{{ additionalDeductionFee.rent | currency }}</span>
+          </div>
+          <div :class="$style.row">
+            <span>赡养老人扣除</span>
+            <span>{{ additionalDeductionFee.support | currency }}</span>
+          </div>
+          <div :class="$style.row">
+            <span>继续教育扣除</span>
+            <span>{{ additionalDeductionFee.education | currency }}</span>
+          </div>
+          <div :class="$style.row">
+            <span>总计</span>
+            <span>{{ additionalDeductionFeeCount | currency }}</span>
+          </div>
+        </div>
+      </div>
+    </el-card>
     <el-card :class="$style.card" header="个人所得税">
       <div :class="$style.table">
         <div :class="$style.row">
@@ -70,6 +105,10 @@
           <span>{{ tax.old | currency }}</span>
         </div>
         <div :class="$style.row">
+          <span>扣除五险一金及定向专项扣除额后薪资</span>
+          <span>{{ salary - socialFundCount - additionalDeductionFeeCount | currency }}</span>
+        </div>
+        <div :class="$style.row">
           <span>个人所得税（新税法）</span>
           <span>{{ tax.new | currency }}</span>
         </div>
@@ -79,7 +118,7 @@
 </template>
 
 <script>
-import { paymentRatioOptions, paymentBaseAreaOptions, cityOptions } from '@/const/salary'
+import { paymentRatioOptions, paymentBaseAreaOptions, cityOptions, childrenOptions, educationOptions, supportOptions, loanOptions, rentOptions } from '@/const/salary'
 
 const middle = (a, b, c) => {
   const min = Math.min(a, b)
@@ -91,14 +130,13 @@ const middle = (a, b, c) => {
 export default {
   data () {
     return {
-      salary: 25000, // 税前工资
+      salary: 0, // 税前工资
       cityId: 1,
       additionalDeduction: { // 定向专项扣除
-        children: 0, // 子女教育
-        adultEducation: 0, // 继续教育
-        homeLoan: 0, // 住房贷款
-        housingRent: 0, // 住房租金
-        parent: 0 // 赡养父母
+        children: 'a', // 子女教育个数
+        adultEducation: 'a', // 继续教育
+        support: 'a', // 赡养父母
+        homeLoan: 'a' // 住房贷款
       },
       socialOptions: [ // 五险一金映射
         { label: '养老保险金', key: 'pension' },
@@ -129,7 +167,11 @@ export default {
           [null, 45, 13505]
         ]
       },
-      cityOptions
+      cityOptions,
+      childrenOptions,
+      educationOptions,
+      loanOptions,
+      supportOptions
     }
   },
   methods: {
@@ -160,9 +202,10 @@ export default {
     },
     tax () {
       const salaryBase = this.salary - this.socialFundCount
+      const salaryBaseNew = this.salary - this.socialFundCount - this.additionalDeductionFeeCount
       return {
         old: +(this.calcTax(salaryBase, 'old')).toFixed(2),
-        new: +(this.calcTax(salaryBase, 'new')).toFixed(2)
+        new: +(this.calcTax(salaryBaseNew, 'new')).toFixed(2)
       }
     },
     oldAtSalary () {
@@ -180,12 +223,29 @@ export default {
     },
     paymentBaseArea () {
       return paymentBaseAreaOptions.find(item => item.id === this.cityId).value
+    },
+    additionalDeductionFee () {
+      const rent = rentOptions.find(item => item.id === this.cityId).value
+      const children = childrenOptions.find(item => item.key === this.additionalDeduction.children).value
+      const education = educationOptions.find(item => item.key === this.additionalDeduction.adultEducation).value
+      const support = supportOptions.find(item => item.key === this.additionalDeduction.support).value
+      const loan = loanOptions.find(item => item.key === this.additionalDeduction.homeLoan).value
+      return {
+        rent,
+        children,
+        education,
+        support,
+        loan
+      }
+    },
+    additionalDeductionFeeCount () {
+      return Object.keys(this.additionalDeductionFee).reduce((res, key) => res + this.additionalDeductionFee[key], 0)
     }
   },
   filters: {
     currency (value) {
       if (!value) return '-'
-      return `￥ ${value} 元`
+      return `￥ ${value.toFixed(2)} 元`
     }
   }
 }
