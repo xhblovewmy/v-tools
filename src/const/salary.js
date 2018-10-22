@@ -11,6 +11,14 @@ export const cityOptions = [
   {
     id: 3,
     name: '杭州'
+  },
+  {
+    id: 4,
+    name: '广州'
+  },
+  {
+    id: 5,
+    name: '深圳'
   }
 ]
 
@@ -48,6 +56,28 @@ export const paymentRatioOptions = [
       birth: [0, 1.2],
       provident: [12, 12]
     }
+  },
+  {
+    id: 4,
+    value: {
+      pension: [8, 14],
+      medical: [2, 7],
+      unemployment: [0.2, 0.64],
+      workInjury: [0, 0.4],
+      birth: [0, 0.85],
+      provident: [5, 5]
+    }
+  },
+  {
+    id: 5,
+    value: {
+      pension: [8, 13],
+      medical: [2, 6.2],
+      unemployment: [0.5, 0.9],
+      workInjury: [0, 0.23],
+      birth: [0, 0.45],
+      provident: [5, 5]
+    }
   }
 ]
 
@@ -73,6 +103,20 @@ export const paymentBaseAreaOptions = [
       { min: 3054.95, max: 15274.74 },
       { min: 1010, max: 24311 }
     ]
+  },
+  {
+    id: 4,
+    value: [
+      { min: 3469, max: 20004 },
+      { min: 2100, max: 24654 }
+    ]
+  },
+  {
+    id: 5,
+    value: [
+      { min: 2200, max: 25044 },
+      { min: 2130, max: 25044 }
+    ]
   }
 ]
 
@@ -88,6 +132,14 @@ export const rentOptions = [
   },
   {
     id: 3,
+    value: 1200
+  },
+  {
+    id: 4,
+    value: 1200
+  },
+  {
+    id: 5,
     value: 1200
   }
 ]
