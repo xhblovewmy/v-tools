@@ -7,6 +7,17 @@
       <el-form-item label="聊天标题">
         <el-input v-model="data.chatName"></el-input>
       </el-form-item>
+      <el-form-item label="聊天背景">
+        <el-upload
+          list-type="picture-card"
+          :on-change="handleBackground"
+          :auto-upload="false"
+          action=""
+          :show-file-list="false">
+          <img :class="$style['preview-image']" :src="data.background" alt="" v-if="data.background">
+          <i class="el-icon-plus" v-else></i>
+        </el-upload>
+      </el-form-item>
       <el-form-item label="显示昵称">
         <el-radio-group v-model="data.showNickname">
           <el-radio :label="true">是</el-radio>
@@ -119,6 +130,7 @@ export default {
       data: {
         chatTime: new Date(),
         chatName: '我是标题',
+        background: '',
         showNickname: true,
         nickname: '我是昵称',
         avatar: 'https://avatars3.githubusercontent.com/u/10060635?s=460&v=4',
@@ -148,6 +160,9 @@ export default {
         return [...arr, item, {...item, id: newId}]
       }, [])
       this.activeIds = [...this.activeIds, newId]
+    },
+    handleBackground (file) {
+      this.data.background = file.url
     },
     handleSelfAvatar (file) {
       this.data.avatar = file.url
@@ -197,7 +212,8 @@ export default {
       justify-content space-between
       padding-right 20px
     .preview-image
-      height 148px
+      max-height 148px
+      max-width 148px
       border-radius 6px
   .preview
     flex 1

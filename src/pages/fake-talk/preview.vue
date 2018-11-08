@@ -9,7 +9,7 @@
         <span>{{form.chatName}}</span>
         <img :src="headerImage" alt="">
       </div>
-      <div :class="$style.body">
+      <div :class="$style.body" :style="{ backgroundImage: `url(${form.background})` }">
         <div v-for="message in form.messageList" :key="message.id" :class="$style.message">
           <div v-if="message.hasTime" :class="$style.time">
             <div>{{ message.time | dateFormat }}</div>
@@ -109,6 +109,8 @@ export default {
   overflow hidden
   min-height 559px
   background #ebebeb
+  background-size 100% auto
+  background-repeat no-repeat
   .message
     margin 10px 0
   .time
