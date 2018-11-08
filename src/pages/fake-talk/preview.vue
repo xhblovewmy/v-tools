@@ -1,15 +1,12 @@
 <template>
   <div :class="$style.container">
-    <div :class="$style.button">
-      <el-button @click="snapshot" type="primary">下载聊天记录截图（png格式）</el-button>
-    </div>
-    <div :class="$style.preview" ref="preview">
-      <div :class="$style.header">
+    <div :class="$style.preview" id="preview">
+      <div :class="$style.header" id="preview-header">
         <span>{{form.chatTime | dateFormat}}</span>
         <span>{{form.chatName}}</span>
         <img :src="headerImage" alt="">
       </div>
-      <div :class="$style.body" :style="{ backgroundImage: `url(${form.background})` }">
+      <div :class="$style.body" id="preview-body" :style="{ backgroundImage: `url(${form.background})` }">
         <div v-for="message in form.messageList" :key="message.id" :class="$style.message">
           <div v-if="message.hasTime" :class="$style.time">
             <div>{{ message.time | dateFormat }}</div>
@@ -40,7 +37,7 @@
           </div>
         </div>
       </div>
-      <div :class="$style.footer">
+      <div :class="$style.footer" id="preview-footer">
         <img :src="footerImage" alt="">
       </div>
     </div>
@@ -48,7 +45,6 @@
 </template>
 
 <script>
-import html2canvas from 'html2canvas'
 import dateFormat from 'dateformat'
 import headerImage from '@/assets/fake-talk/header.png'
 import footerImage from '@/assets/fake-talk/footer.png'
@@ -63,14 +59,6 @@ export default {
       footerImage
     }
   },
-  methods: {
-    async snapshot () {
-      console.log(this.$refs.preview)
-      this.canvas = await html2canvas(this.$refs.preview)
-      this.previewImage = this.canvas.toDataURL().replace('image/png', 'image/octet-stream')
-      window.location.href = this.previewImage
-    }
-  },
   filters: {
     dateFormat (value) {
       if (!value) return ''
@@ -81,10 +69,11 @@ export default {
 </script>
 
 <style lang="stylus" module>
-.button
-  margin-bottom 20px
 .preview
+  display flex
+  flex-direction column
   width 375px
+  height 667px
   img
     max-width 100%
   .header
@@ -101,13 +90,22 @@ export default {
         left 50%
         bottom 14px
         transform translate(-50%, 0)
+
+  .header
+    height 60px
+  .footer
+    height 44px
   .header,
   .footer
-    margin-bottom -5px
+    width 375px
+    img
+      display block
+      width 100%
+      height 100%
 
 .body
-  overflow hidden
-  min-height 559px
+  flex 1
+  overflow auto
   background #ebebeb
   background-size 100% auto
   background-repeat no-repeat
