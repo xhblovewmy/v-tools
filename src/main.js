@@ -15,6 +15,7 @@ import {
   MenuItem,
   TimePicker,
   Input,
+  InputNumber,
   Collapse,
   CollapseItem,
   Upload,
@@ -47,6 +48,7 @@ Vue.use(Upload)
 Vue.use(Card)
 Vue.use(Select)
 Vue.use(Option)
+Vue.use(InputNumber)
 
 /* eslint-disable no-new */
 new Vue({

@@ -81,8 +81,8 @@ export const paymentRatioOptions = [
   }
 ]
 
-// 缴纳基数范围
-export const paymentBaseAreaOptions = [
+// 五险一金缴纳基数范围
+export const paymentBaseRangeOptions = [
   {
     id: 1,
     value: [
@@ -120,117 +120,42 @@ export const paymentBaseAreaOptions = [
   }
 ]
 
-// 租赁情况
-export const rentOptions = [
-  {
-    id: 1,
-    value: 1200
-  },
-  {
-    id: 2,
-    value: 1200
-  },
-  {
-    id: 3,
-    value: 1200
-  },
-  {
-    id: 4,
-    value: 1200
-  },
-  {
-    id: 5,
-    value: 1200
-  }
+// 五险一金映射
+export const socialOptions = [
+  { label: '养老保险金', key: 'pension' },
+  { label: '医疗保险金', key: 'medical' },
+  { label: '失业保险金', key: 'unemployment' },
+  { label: '工伤保险金', key: 'workInjury' },
+  { label: '生育保险金', key: 'birth' },
+  { label: '住房公积金', key: 'provident' }
 ]
 
-// 受教育子女数量
-export const childrenOptions = [
-  {
-    label: '无',
-    key: 'a',
-    value: 0
-  },
-  {
-    label: '一个',
-    key: 'b',
-    value: 1000
-  },
-  {
-    label: '两个',
-    key: 'c',
-    value: 2000
-  },
-  {
-    label: '三个',
-    key: 'd',
-    value: 3000
-  }
+// 五险一金映射
+export const additionalDeductionOptions = [
+  { label: '子女教育', key: 'children' },
+  { label: '继续教育', key: 'education' },
+  { label: '大病医疗', key: 'hospital' },
+  { label: '赡养老人', key: 'support' },
+  { label: '住房贷款利息', key: 'loan' },
+  { label: '住房租金', key: 'rent' }
 ]
 
-// 个人继续教育情况
-export const educationOptions = [
-  {
-    label: '无',
-    key: 'a',
-    value: 0
-  },
-  {
-    label: '学历继续教育（教育期间）',
-    key: 'b',
-    value: 400
-  },
-  {
-    label: '技能人员职业资格继续教育（已获取相关证书）',
-    key: 'c',
-    value: 300
-  },
-  {
-    label: '专业技术人员职业资格继续教育（已获取相关证书）',
-    key: 'd',
-    value: 300
-  }
+// 个人所得税速查表
+export const newTaxRatio = [
+  [36000, 3, 0],
+  [144000, 10, 2520],
+  [300000, 20, 16920],
+  [420000, 25, 31920],
+  [660000, 30, 52920],
+  [960000, 35, 85920],
+  [null, 45, 181920]
 ]
 
-// 赡养老人情况
-export const supportOptions = [
-  {
-    label: '独生子女',
-    key: 'a',
-    value: 2000
-  },
-  {
-    label: '2个',
-    key: 'b',
-    value: 1000
-  },
-  {
-    label: '3个',
-    key: 'c',
-    value: 667
-  },
-  {
-    label: '4个',
-    key: 'd',
-    value: 500
-  }
-]
-
-// 住房贷款情况
-export const loanOptions = [
-  {
-    label: '无住房贷款',
-    key: 'a',
-    value: 0
-  },
-  {
-    label: '首套房贷款',
-    key: 'b',
-    value: 1000
-  },
-  {
-    label: '非首套房贷款',
-    key: 'c',
-    value: 0
-  }
-]
+// 最低工资
+export const minSalaryMap = {
+  1: 2420,
+  2: 2120,
+  3: 2010,
+  4: 2100,
+  5: 2200
+}

@@ -1,10 +1,13 @@
 <template>
   <div>
-    <el-form label-width="200px">
+    <el-form label-width="100px">
       <el-form-item label="税前薪资">
-        <el-input v-model="salary">
-          <template slot="append">元</template>
-        </el-input>
+        <el-input-number
+          v-model="salary"
+          :min="minSalaryMap[cityId]"
+          :step="100"
+          controls-position="right"
+        />
       </el-form-item>
       <el-form-item label="城市">
         <el-select v-model="cityId" filterable placeholder="请选择">
@@ -16,259 +19,209 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="接受教育子女数">
-        <el-radio-group v-model="additionalDeduction.children">
-          <el-radio v-for="option in childrenOptions" :label="option.key" :key="option.key">{{ option.label }}</el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label="个人继续教育情况">
-        <el-radio-group v-model="additionalDeduction.adultEducation" :class="$style['radio-group-vertical']">
-          <el-radio v-for="option in educationOptions" :label="option.key" :key="option.key">{{ option.label }}</el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label="兄弟姐妹个数">
-        <el-radio-group v-model="additionalDeduction.support" :class="$style['radio-group-vertical']">
-          <el-radio v-for="option in supportOptions" :label="option.key" :key="option.key">{{ option.label }}</el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label="住房贷款情况">
-        <el-radio-group v-model="additionalDeduction.homeLoan" :class="$style['radio-group-vertical']">
-          <el-radio v-for="option in loanOptions" :label="option.key" :key="option.key">{{ option.label }}</el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label="税后薪资（旧税法）">
-        <el-input v-model="oldAtSalary" disabled>
-          <template slot="append">元</template>
-        </el-input>
-      </el-form-item>
-      <el-form-item label="税后薪资（新税法）">
-        <el-input v-model="newAtSalary" disabled>
-          <template slot="append">元</template>
-        </el-input>
-      </el-form-item>
+      <div :class="$style.card">
+        <p :class="$style.title">专项附加扣除</p>
+        <div :class="$style.list">
+          <el-form-item :class="$style.item" v-for="option in additionalDeductionOptions" :key="option.key" :label="option.label">
+              <el-input-number
+                v-model="additionalDeduction[option.key]"
+                :min="0"
+                :step="100"
+                controls-position="right"
+              />
+          </el-form-item>
+        </div>
+      </div>
     </el-form>
-    <el-card :class="$style.card">
-      <div slot="header">
-        <div>五险一金 <span>（总计：{{ socialFundCount | currency }}）</span></div>
+    <div :class="$style.card">
+      <div :class="$style.header">
+        <p :class="$style.title">税后薪资 与 个人所得税</p>
+        <el-button type="text" @click="showTax = !showTax">{{ showTax ? '折叠' : '展开' }}</el-button>
       </div>
-      <div :class="$style.table">
-        <div :class="$style.row">
-          <span></span>
-          <span>个人缴纳金额</span>
-          <span>单位缴纳金额</span>
-        </div>
-        <div v-for="({ label, key }) in socialOptions" :key="key" :class="$style.row">
-          <span>{{ label }}</span>
-          <span>{{ socialFund[key][0] | currency }}</span>
-          <span>{{ socialFund[key][1] | currency }}</span>
-        </div>
-      </div>
-    </el-card>
-    <el-card :class="$style.card" header="专项附加扣除额">
-      <div>
+      <div :class="$style.list" v-if="showTax">
         <div :class="$style.table">
           <div :class="$style.row">
-            <span>子女教育扣除</span>
-            <span>{{ additionalDeductionFee.children | currency }}</span>
+            <span>月份</span>
+            <span>税后薪资</span>
+            <span>个人所得税</span>
           </div>
-          <div :class="$style.row">
-            <span>首套房房贷利息扣除</span>
-            <span>{{ additionalDeductionFee.loan | currency }}</span>
-          </div>
-          <div :class="$style.row">
-            <span>房租扣除</span>
-            <span>{{ additionalDeductionFee.rent | currency }}</span>
-          </div>
-          <div :class="$style.row">
-            <span>赡养老人扣除</span>
-            <span>{{ additionalDeductionFee.support | currency }}</span>
-          </div>
-          <div :class="$style.row">
-            <span>继续教育扣除</span>
-            <span>{{ additionalDeductionFee.education | currency }}</span>
+          <div v-for="(tax, index) in newTaxYear" :key="index" :class="$style.row">
+            <span>{{ index + 1 }} 月</span>
+            <span>{{ realSalaryYear[index] | currencyFitler }}</span>
+            <span>{{ tax | currencyFitler }}</span>
           </div>
           <div :class="$style.row">
             <span>总计</span>
-            <span>{{ additionalDeductionFeeCount | currency }}</span>
+            <span>{{ realSalaryYearCount | currencyFitler }}</span>
+            <span>{{ newTaxYearCount | currencyFitler }}</span>
           </div>
         </div>
       </div>
-    </el-card>
-    <el-card :class="$style.card" header="个人所得税">
-      <div :class="$style.table">
-        <div :class="$style.row">
-          <span>扣除五险一金后薪资</span>
-          <span>{{ salary - socialFundCount | currency }}</span>
-        </div>
-        <div :class="$style.row">
-          <span>个人所得税（旧税法）</span>
-          <span>{{ tax.old | currency }}</span>
-        </div>
-        <div :class="$style.row">
-          <span>扣除五险一金及定向专项扣除额后薪资</span>
-          <span>{{ salary - socialFundCount - additionalDeductionFeeCount | currency }}</span>
-        </div>
-        <div :class="$style.row">
-          <span>个人所得税（新税法）</span>
-          <span>{{ tax.new | currency }}</span>
-        </div>
+    </div>
+    <div :class="$style.card">
+      <div :class="$style.header">
+        <p :class="$style.title">五险一金</p>
+        <el-button type="text" @click="showPayment = !showPayment">{{ showPayment ? '折叠' : '展开' }}</el-button>
       </div>
-    </el-card>
+      <template v-if="showPayment">
+        <p>个人缴纳 - (总计：{{ this.paymentCount[0] | currencyFitler }})</p>
+        <div :class="$style.list">
+          <div v-for="option in socialOptions" :key="option.key" :class="$style.item">
+            <span>{{ option.label }}</span>
+            <span>{{ payment[option.key][0] | currencyFitler }}</span>
+          </div>
+        </div>
+        <p>公司缴纳 - (总计：{{ this.paymentCount[1] | currencyFitler }})</p>
+        <div :class="$style.list">
+          <div v-for="option in socialOptions" :key="option.key" :class="$style.item">
+            <span>{{ option.label }}</span>
+            <span>{{ payment[option.key][1] | currencyFitler }}</span>
+          </div>
+        </div>
+      </template>
+    </div>
   </div>
 </template>
 
 <script>
-import { paymentRatioOptions, paymentBaseAreaOptions, cityOptions, childrenOptions, educationOptions, supportOptions, loanOptions, rentOptions } from '@/const/salary'
+import {
+  cityOptions,
+  paymentBaseRangeOptions,
+  paymentRatioOptions,
+  additionalDeductionOptions,
+  newTaxRatio,
+  socialOptions,
+  minSalaryMap
+} from '@/const/salary'
 
-const middle = (a, b, c) => {
-  const min = Math.min(a, b)
-  const max = Math.max(a, b)
-  if (c < min) return min
-  if (c > max) return max
-  return c
-}
 export default {
   data () {
     return {
-      salary: 0, // 税前工资
+      salary: 0, // 税前薪资
       cityId: 1,
-      additionalDeduction: { // 定向专项扣除
-        children: 'a', // 子女教育个数
-        adultEducation: 'a', // 继续教育
-        support: 'a', // 赡养父母
-        homeLoan: 'a' // 住房贷款
-      },
-      socialOptions: [ // 五险一金映射
-        { label: '养老保险金', key: 'pension' },
-        { label: '医疗保险金', key: 'medical' },
-        { label: '失业保险金', key: 'unemployment' },
-        { label: '工伤保险金', key: 'workInjury' },
-        { label: '生育保险金', key: 'birth' },
-        { label: '住房公积金', key: 'provident' }
-      ],
-      taxBase: [3500, 5000], // 个人所得税起征点
-      taxRatioList: { // 个人所得税速查表
-        new: [
-          [3000, 3, 0],
-          [12000, 10, 210],
-          [25000, 20, 1410],
-          [35000, 25, 2660],
-          [55000, 30, 4410],
-          [80000, 35, 7160],
-          [null, 45, 15160]
-        ],
-        old: [
-          [1500, 3, 0],
-          [4500, 10, 105],
-          [9000, 20, 555],
-          [35000, 25, 1005],
-          [55000, 30, 2755],
-          [80000, 35, 5505],
-          [null, 45, 13505]
-        ]
+      additionalDeduction: { // 专项附加扣除
+        rent: 0,
+        children: 0,
+        education: 0,
+        support: 0,
+        loan: 0,
+        hospital: 0
       },
       cityOptions,
-      childrenOptions,
-      educationOptions,
-      loanOptions,
-      supportOptions
+      additionalDeductionOptions,
+      socialOptions,
+      minSalaryMap,
+      showTax: true,
+      showPayment: true
     }
   },
   methods: {
-    calcTax (num, mode) {
-      const base = mode === 'old' ? num - this.taxBase[0] : num - this.taxBase[1]
-      if (base < 0) return 0
-      for (const [max, ratio, deduction] of this.taxRatioList[mode]) {
-        console.log(base, max, ratio, deduction)
-        if (max === null || base <= max) return base * ratio / 100 - deduction
+    getTax (taxBase, count) {
+      if (taxBase <= 0) return 0
+      for (const [max, ratio, deduction] of newTaxRatio) {
+        if (max === null || taxBase <= max) return taxBase * ratio / 100 - deduction - count
       }
-    }
-  },
-  computed: {
-    socialFund () {
-      return Object.keys(this.paymentRatio).reduce((obj, key) => {
-        const value = this.paymentRatio[key].map(ratio => {
-          const area = key === 'provident' ? this.paymentBaseArea[1] : this.paymentBaseArea[0]
-          return +(middle(this.salary, area.min, area.max) * ratio / 100).toFixed(2)
-        })
-        return {
-          ...obj,
-          [key]: value
-        }
-      }, {})
-    },
-    socialFundCount () {
-      return Object.keys(this.socialFund).reduce((res, key) => res + this.socialFund[key][0], 0)
-    },
-    tax () {
-      const salaryBase = this.salary - this.socialFundCount
-      const salaryBaseNew = this.salary - this.socialFundCount - this.additionalDeductionFeeCount
-      return {
-        old: +(this.calcTax(salaryBase, 'old')).toFixed(2),
-        new: +(this.calcTax(salaryBaseNew, 'new')).toFixed(2)
-      }
-    },
-    oldAtSalary () {
-      const tax = this.tax.old
-      const socialCount = this.socialFundCount
-      return +(this.salary - socialCount - tax).toFixed(2)
-    },
-    newAtSalary () {
-      const tax = this.tax.new
-      const socialCount = this.socialFundCount
-      return +(this.salary - socialCount - tax).toFixed(2)
-    },
-    paymentRatio () {
-      return paymentRatioOptions.find(item => item.id === this.cityId).value
-    },
-    paymentBaseArea () {
-      return paymentBaseAreaOptions.find(item => item.id === this.cityId).value
-    },
-    additionalDeductionFee () {
-      const rent = rentOptions.find(item => item.id === this.cityId).value
-      const children = childrenOptions.find(item => item.key === this.additionalDeduction.children).value
-      const education = educationOptions.find(item => item.key === this.additionalDeduction.adultEducation).value
-      const support = supportOptions.find(item => item.key === this.additionalDeduction.support).value
-      const loan = loanOptions.find(item => item.key === this.additionalDeduction.homeLoan).value
-      return {
-        rent,
-        children,
-        education,
-        support,
-        loan
-      }
-    },
-    additionalDeductionFeeCount () {
-      return Object.keys(this.additionalDeductionFee).reduce((res, key) => res + this.additionalDeductionFee[key], 0)
     }
   },
   filters: {
-    currency (value) {
-      if (!value) return '-'
+    currencyFitler (value) {
+      if (value === null || value === undefined) return null
       return `￥ ${value.toFixed(2)} 元`
+    }
+  },
+  computed: {
+    paymentBaseRange () { // 五险一金缴纳基数范围
+      return paymentBaseRangeOptions.find(option => option.id === this.cityId).value
+    },
+    paymentRatio () { // 五险一金缴纳比例
+      return paymentRatioOptions.find(option => option.id === this.cityId).value
+    },
+    paymentBase () { // 五险一金缴纳基数
+      return this.paymentBaseRange.map(item => {
+        const { min, max } = item
+        if (this.salary > max) return max
+        if (this.salary < min) return min
+        return this.salary
+      })
+    },
+    payment () { // 五险一金缴纳金额
+      return Object.keys(this.paymentRatio).reduce((obj, key) => {
+        const value = this.paymentRatio[key].map(ratio => {
+          const paymentBase = key === 'provident' ? this.paymentBase[1] : this.paymentBase[0]
+          return paymentBase * ratio / 100
+        })
+        return { ...obj, [key]: value }
+      }, {})
+    },
+    paymentCount () { // 五险一金缴纳总额
+      return Object.keys(this.payment)
+        .map(key => this.payment[key])
+        .reduce(
+          ([selfCount, companyCount], [self, company]) => [selfCount + self, companyCount + company],
+          [0, 0]
+        )
+    },
+    additionalDeductionCount () { // 专项附加扣除总和
+      return Object.keys(this.additionalDeduction)
+        .map(key => this.additionalDeduction[key])
+        .reduce((a, b) => a + b, 0)
+    },
+    taxBase () { // 计税基数
+      return Math.max(this.salary - this.paymentCount[0] - this.additionalDeductionCount - 5000, 0)
+    },
+    newTaxYear () {
+      const taxList = []
+      let count = 0
+      for (let i = 1; i <= 12; i++) {
+        const tax = this.getTax(this.taxBase * i, count)
+        taxList.push(tax)
+        count += tax
+      }
+      return taxList
+    },
+    newTaxYearCount () {
+      return this.newTaxYear.reduce((a, b) => a + b, 0)
+    },
+    realSalaryYear () {
+      return this.newTaxYear.map(tax => this.salary - this.paymentCount[0] - tax)
+    },
+    realSalaryYearCount () {
+      return this.realSalaryYear.reduce((a, b) => a + b, 0)
     }
   }
 }
 </script>
 
 <style lang="stylus" module>
-.line
-  display flex
-  > div
-    margin-right 20px
 .card
+  border 1px solid #eeeeee
+  border-radius 10px
   margin-bottom 20px
-.radio-group-vertical
-  :global
-    .el-radio
-      display block
-      margin-left 0
-      margin-top 12px
-.table
-  width 600px
-  margin-left 100px
-  .row
+  font-size 14px
+  .header
     display flex
-    span
-      flex 1
+  .title
+    font-size 16px
+    font-weight bolder
+    margin-right 20px
+  p
+    margin-left 20px
+  .list
+    display flex
+    flex-wrap wrap
+    padding 0 20px
+    .item
+      min-width 33.3%
+      line-height 40px
+      >span
+        margin-right 10px
+  .table
+    .row
+      display flex
+      >span
+        text-align right
+      >span:first-child
+        width 40px
+      >span:not(:first-child)
+        width 140px
 </style>
