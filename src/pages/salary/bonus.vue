@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-form label-width="100px" @submit.native.prevent>
-      <el-form-item label="年终奖">
+      <el-form-item label="税前年终奖">
         <el-input-number
           v-model="bonus"
           :min="0"
@@ -9,25 +9,55 @@
           controls-position="right"
         />
       </el-form-item>
-      <el-form-item label="缴税">
+      <el-form-item label="个人所得税">
         <span> {{ tax | currencyFitler }}</span>
       </el-form-item>
       <el-form-item label="实发年终奖">
         <span> {{ realBonus | currencyFitler }}</span>
       </el-form-item>
     </el-form>
+    <ve-line
+      v-for="(chartData, index) in chartDatas"
+      :key="index"
+      :data="chartData"
+      :settings="chartSetting"
+    />
   </div>
 </template>
 
 <script>
 import {
-  newBonusTaxRatio
+  newBonusTaxRatio,
+  bonusData
 } from '@/const/salary'
 export default {
   data () {
     return {
-      bonus: 0
+      bonus: 0,
+      chartSetting: {
+        metrics: ['bonus', 'tax', 'realBonus'],
+        dimension: ['index'],
+        area: true,
+        // stack: { 'bonus': ['realBonus', 'tax'] },
+        labelMap: {
+          bonus: '税前年终奖',
+          tax: '个人所得税',
+          realBonus: '实发工资'
+        }
+      },
+      chartDatas: []
     }
+  },
+  created () {
+    const levels = [100, 350, 600, 800, 1200]
+    const chartDatas = levels.map((max, index) => {
+      const start = index === 0 ? 0 : levels[index - 1]
+      return bonusData.slice(start, max)
+    }).map(rows => ({
+      columns: [ 'index', 'bonus', 'realBonus', 'tax' ],
+      rows
+    }))
+    this.chartDatas = chartDatas
   },
   filters: {
     currencyFitler (value) {

@@ -170,3 +170,20 @@ export const minSalaryMap = {
   4: 2100,
   5: 2200
 }
+
+const getTax = (bonus) => {
+  for (const [max, ratio, deduction] of newBonusTaxRatio) {
+    if (max === null || bonus <= max) return bonus * ratio / 100 - deduction
+  }
+}
+
+// 年终奖与实际得手
+const bonusData = []
+for (let i = 0; i <= 1200; i++) {
+  const bonus = i * 1000
+  const tax = getTax(bonus)
+  const realBonus = bonus - tax
+  bonusData.push({ index: `${bonus}`, bonus, tax, realBonus })
+}
+
+export { bonusData }
