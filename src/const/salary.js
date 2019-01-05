@@ -151,6 +151,17 @@ export const newTaxRatio = [
   [null, 45, 181920]
 ]
 
+// 年终奖个人所得税速查表
+export const newBonusTaxRatio = [
+  [36000, 3, 0],
+  [144000, 10, 210],
+  [300000, 20, 1410],
+  [420000, 25, 2660],
+  [660000, 30, 4410],
+  [960000, 35, 7160],
+  [null, 45, 15160]
+]
+
 // 最低工资
 export const minSalaryMap = {
   1: 2420,
