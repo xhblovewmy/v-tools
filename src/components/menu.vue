@@ -19,11 +19,10 @@ export default {
     }
   },
   created () {
-    console.log(this.$route.name, menu.map(item => item.name))
+    // console.log(this.$route.name, menu.map(item => item.name))
   },
   methods: {
     changeMenu (key, keyPath) {
-      console.log(key, keyPath)
       this.$router.push({name: key})
     }
   }
